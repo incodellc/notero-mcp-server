@@ -1,0 +1,21 @@
+# Environment
+.env
+.env.production
+
+# Node
+node_modules/
+
+# Build
+dist/
+build/
+
+# Logs
+logs/
+*.log
+
+# Cache
+.cache/
+.turbo/
+
+# Openspec
+.openspec/changes
