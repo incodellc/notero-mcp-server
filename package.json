@@ -2,12 +2,33 @@
   "name": "mcp-server",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "npm run build:ts && fastify start -l info dist/index.js",
+    "build:ts": "tsc",
+    "watch:ts": "tsc -w",
+    "dev": "tsx watch src/index.ts",
+    "dev:start": "fastify start --ignore-watch=.ts$ -w -l info -P dist/index.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "packageManager": "pnpm@10.6.3"
+  "packageManager": "pnpm@10.6.3",
+  "dependencies": {
+    "@fastify/autoload": "^6.0.0",
+    "@fastify/sensible": "^6.0.0",
+    "fastify": "^5.0.0",
+    "fastify-cli": "^8.0.0",
+    "fastify-plugin": "^5.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^26.0.1",
+    "c8": "^11.0.0",
+    "concurrently": "^9.0.0",
+    "fastify-cli": "^8.0.0",
+    "fastify-tsconfig": "^3.0.0",
+    "tsx": "^4.22.4",
+    "typescript": "~5.9.2"
+  }
 }
