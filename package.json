@@ -1,34 +1,38 @@
 {
   "name": "mcp-server",
-  "version": "1.0.0",
-  "description": "",
-  "main": "dist/index.js",
+  "version": "0.1.0",
+  "description": "Notero MCP server — exposes meeting data to AI clients via Model Context Protocol",
   "type": "module",
+  "main": "dist/index.js",
   "scripts": {
-    "start": "npm run build:ts && fastify start -l info dist/index.js",
-    "build:ts": "tsc",
-    "watch:ts": "tsc -w",
-    "dev": "tsx watch src/index.ts",
-    "dev:start": "fastify start --ignore-watch=.ts$ -w -l info -P dist/index.js"
+    "dev": "tsx watch --env-file=.env src/index.ts",
+    "build": "tsc",
+    "start": "node --env-file=.env dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "lint": "eslint \"src/**/*.ts\" --fix",
+    "format": "prettier --write \"src/**/*.ts\""
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "packageManager": "pnpm@10.6.3",
   "dependencies": {
-    "@fastify/autoload": "^6.0.0",
-    "@fastify/sensible": "^6.0.0",
+    "@modelcontextprotocol/sdk": "^1.29.0",
     "fastify": "^5.0.0",
-    "fastify-cli": "^8.0.0",
-    "fastify-plugin": "^5.0.0"
+    "pino": "^10.0.0",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@types/node": "^26.0.1",
-    "c8": "^11.0.0",
-    "concurrently": "^9.0.0",
-    "fastify-cli": "^8.0.0",
-    "fastify-tsconfig": "^3.0.0",
-    "tsx": "^4.22.4",
-    "typescript": "~5.9.2"
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^24.0.0",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-prettier": "^5.5.6",
+    "eslint-plugin-simple-import-sort": "^13.0.0",
+    "eslint-plugin-unicorn": "^69.0.0",
+    "globals": "^17.7.0",
+    "pino-pretty": "^13.1.3",
+    "tsx": "^4.19.0",
+    "typescript": "^5.4.0",
+    "typescript-eslint": "^8.62.0"
   }
 }
