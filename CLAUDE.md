@@ -63,6 +63,7 @@ Every file must carry a descriptive **domain suffix** that describes its role:
 | Domain HTTP client | `.api.ts` | `recording.api.ts` |
 | Data access | `.repository.ts` | `recording.repository.ts` |
 | MCP resource | `.resource.ts` | `recording.resource.ts` |
+| MCP tool | `.tool.ts` | `recording.tool.ts` |
 | Markdown formatter | `.formatter.ts` | `transcript.formatter.ts` |
 | Type definitions | `.types.ts` | `recording.types.ts` |
 | Errors | `.errors.ts` | `authentication.errors.ts` |

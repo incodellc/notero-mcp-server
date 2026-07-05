@@ -1,8 +1,8 @@
-export const RECORDING_API_PATHS = {
-  BASE: '/internal/mcp/recordings',
-  SUFFIXES: {
-    METADATA: 'metadata',
-    SUMMARY: 'summary',
-    TRANSCRIPT: 'transcript',
+export const RecordingApiPaths = {
+  Base: '/internal/mcp/recordings',
+  Suffixes: {
+    Metadata: 'metadata',
+    Summary: 'summary',
+    Transcript: 'transcript',
   },
 } as const;

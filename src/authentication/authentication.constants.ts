@@ -1,25 +1,65 @@
-export const AUTHENTICATION_HEADERS = {
-  AUTHORIZATION: 'authorization',
-  USER_EMAIL: 'x-user-email',
+export const AuthenticationHeaders = {
+  Authorization: 'authorization',
 } as const;
 
-export const AUTHENTICATION_OUTBOUND_HEADERS = {
-  AUTHORIZATION: 'Authorization',
-  USER_EMAIL: 'X-User-Email',
+export const AuthenticationOutboundHeaders = {
+  ServiceAuthorization: 'Authorization',
+  OrganizationId: 'X-Organization-Id',
+  UserId: 'X-User-Id',
+  UserEmail: 'X-User-Email',
 } as const;
 
-export const AUTHENTICATION_QUERY_PARAMS = {
-  EMAIL: 'email',
+export const AuthenticationRoutes = {
+  ProtectedResourceMetadata: '/.well-known/oauth-protected-resource',
 } as const;
 
-export const AUTHENTICATION_ERROR_STATUSES = {
-  UNAUTHORIZED: 401,
-  FORBIDDEN: 403,
+export const AuthenticationErrorStatuses = {
+  Unauthorized: 401,
+  Forbidden: 403,
 } as const;
 
-export const AUTHENTICATION_ERROR_MESSAGES = {
-  MISSING_API_KEY:
-    'Authentication failed: no API key provided. Include your organization API key via Authorization: Bearer <key>',
-  MISSING_EMAIL:
-    'Authentication failed: email is required for auditing. Provide it via the X-User-Email header or ?email= query parameter.',
+export const WwwAuthenticate = {
+  HeaderName: 'WWW-Authenticate',
+  Scheme: 'Bearer',
+  ResourceMetadataParam: 'resource_metadata',
+  ErrorParam: 'error',
+} as const;
+
+export const WwwAuthenticateErrors = {
+  InvalidToken: 'invalid_token',
+  InsufficientScope: 'insufficient_scope',
+} as const;
+
+export const AccessTokenClaimKeys = {
+  Email: 'email',
+  OrganizationId: 'organizationId',
+  Scope: 'scope',
+} as const;
+
+export const ProtectedResourceMetadataFields = {
+  Resource: 'resource',
+  AuthorizationServers: 'authorization_servers',
+  ScopesSupported: 'scopes_supported',
+  BearerMethodsSupported: 'bearer_methods_supported',
+} as const;
+
+export const BearerMethods = {
+  Header: 'header',
+} as const;
+
+export const RequiredScope = 'notero:read';
+
+export const ScopeDelimiter = ' ';
+
+export const DerivedJwksPath = '/.well-known/jwks.json';
+
+export const TokenClockToleranceSeconds = 5;
+
+export const AuthenticationErrorMessages = {
+  MissingToken:
+    'Authentication failed: no access token provided. Include a valid OAuth access token via Authorization: Bearer <token>.',
+  InvalidToken:
+    'Authentication failed: the access token is missing, malformed, expired, or not valid for this server.',
+  InsufficientScope:
+    'Authentication failed: the access token does not grant the scope required for this resource.',
 } as const;

@@ -1,4 +1,4 @@
-export const MIME_TYPES = {
-  MARKDOWN: 'text/markdown',
-  JSON: 'application/json',
+export const MimeTypes = {
+  Markdown: 'text/markdown',
+  Json: 'application/json',
 } as const;

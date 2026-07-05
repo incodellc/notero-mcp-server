@@ -1,3 +1,3 @@
-export const USER_API_PATHS = {
-  PROFILE: '/internal/mcp/user',
+export const UserApiPaths = {
+  Profile: '/internal/mcp/user',
 } as const;

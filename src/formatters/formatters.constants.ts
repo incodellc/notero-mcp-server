@@ -1,18 +1,18 @@
-export const FORMATTER_SECTION_HEADERS = {
-  MEETING_METADATA: '# Meeting Metadata',
-  MEETING_SUMMARY: '# Meeting Summary',
-  MEETING_TRANSCRIPT: '# Meeting Transcript',
-  USER_PROFILE: '# User Profile',
+export const FormatterSectionHeaders = {
+  MeetingMetadata: '# Meeting Metadata',
+  MeetingSummary: '# Meeting Summary',
+  MeetingTranscript: '# Meeting Transcript',
+  UserProfile: '# User Profile',
 } as const;
 
-export const FORMATTER_FALLBACK_VALUES = {
-  UNKNOWN_PARTICIPANT: 'Unknown',
-  UNKNOWN_SPEAKER: 'Unknown Speaker',
-  UNTITLED_MEETING: 'Untitled',
-  EMPTY_VALUE: '—',
+export const FormatterFallbackValues = {
+  UnknownParticipant: 'Unknown',
+  UnknownSpeaker: 'Unknown Speaker',
+  UntitledMeeting: 'Untitled',
+  EmptyValue: '—',
 } as const;
 
-export const FORMATTER_PROVIDERS = {
-  RECALL_BOT: 'Recall Bot',
-  DIRECT_UPLOAD: 'Direct Upload',
+export const FormatterProviders = {
+  RecallBot: 'Recall Bot',
+  DirectUpload: 'Direct Upload',
 } as const;

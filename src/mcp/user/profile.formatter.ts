@@ -1,6 +1,6 @@
 import {
-  FORMATTER_FALLBACK_VALUES,
-  FORMATTER_SECTION_HEADERS,
+  FormatterFallbackValues,
+  FormatterSectionHeaders,
 } from '../../formatters/formatters.constants.js';
 import type { UserProfile } from './user.types.js';
 
@@ -8,14 +8,14 @@ export function formatProfile(profile: UserProfile): string {
   const { user, organization } = profile;
   const name =
     [user.firstName, user.lastName].filter(Boolean).join(' ') ||
-    FORMATTER_FALLBACK_VALUES.EMPTY_VALUE;
+    FormatterFallbackValues.EmptyValue;
 
   return [
-    FORMATTER_SECTION_HEADERS.USER_PROFILE,
+    FormatterSectionHeaders.UserProfile,
     `**Name:** ${name}`,
     `**Email:** ${user.email}`,
-    `**Role:** ${user.role ?? FORMATTER_FALLBACK_VALUES.EMPTY_VALUE}`,
-    `**Title:** ${user.title ?? FORMATTER_FALLBACK_VALUES.EMPTY_VALUE}`,
+    `**Role:** ${user.role ?? FormatterFallbackValues.EmptyValue}`,
+    `**Title:** ${user.title ?? FormatterFallbackValues.EmptyValue}`,
     `**Organization:** ${organization.name}`,
   ].join('\n');
 }

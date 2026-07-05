@@ -1,11 +1,13 @@
 import type { FastifyInstance } from 'fastify';
 
+import { WwwAuthenticate } from '../authentication/authentication.constants.js';
 import { AuthenticationError } from '../authentication/authentication.errors.js';
 import { authenticationMiddleware } from '../authentication/authentication.middleware.js';
-import { HTTP_STATUS } from '../shared/constants/http.constants.js';
+import { buildWwwAuthenticateHeader } from '../authentication/authentication.service.js';
+import { HttpStatus } from '../shared/constants/http.constants.js';
 import type { RequestLogContext } from '../shared/logger/logger.types.js';
 import { hashUserIdentifier } from '../shared/logger/sanitization.utils.js';
-import { MCP_JSON_RPC, MCP_LOG_STATUSES, MCP_ROUTES } from './mcp.constants.js';
+import { McpJsonRpc, McpLogStatuses, McpRoutes } from './mcp.constants.js';
 import { handleMcpRequest } from './mcp.service.js';
 
 export default async function mcpController(
@@ -13,25 +15,29 @@ export default async function mcpController(
 ): Promise<void> {
   fastify.setErrorHandler(async (error: Error, _request, reply) => {
     const isAuth = error instanceof AuthenticationError;
+    if (isAuth) {
+      reply.header(
+        WwwAuthenticate.HeaderName,
+        buildWwwAuthenticateHeader(error.wwwAuthenticateError),
+      );
+    }
     await reply
-      .code(
-        isAuth ? HTTP_STATUS.UNAUTHORIZED : HTTP_STATUS.INTERNAL_SERVER_ERROR,
-      )
+      .code(isAuth ? error.status : HttpStatus.InternalServerError)
       .send({
-        jsonrpc: MCP_JSON_RPC.VERSION,
+        jsonrpc: McpJsonRpc.Version,
         id: null,
         error: {
           code: isAuth
-            ? MCP_JSON_RPC.AUTH_ERROR_CODE
-            : MCP_JSON_RPC.INTERNAL_ERROR_CODE,
+            ? McpJsonRpc.AuthErrorCode
+            : McpJsonRpc.InternalErrorCode,
           message: error.message,
         },
       });
   });
 
-  fastify.post(MCP_ROUTES.ENDPOINT, async (request, reply) => {
+  fastify.post(McpRoutes.Endpoint, async (request, reply) => {
     const startTime = Date.now();
-    let userHash: string = MCP_LOG_STATUSES.UNKNOWN_EMAIL;
+    let userHash: string = McpLogStatuses.UnknownEmail;
 
     try {
       const context = await authenticationMiddleware(request);
@@ -43,7 +49,7 @@ export default async function mcpController(
       const logContext: RequestLogContext = {
         userHash,
         durationMs: Date.now() - startTime,
-        status: MCP_LOG_STATUSES.SUCCESS,
+        status: McpLogStatuses.Success,
       };
       request.log.info(logContext, 'MCP request handled');
     } catch (error) {
@@ -52,8 +58,8 @@ export default async function mcpController(
         durationMs: Date.now() - startTime,
         status:
           error instanceof AuthenticationError
-            ? MCP_LOG_STATUSES.AUTH_ERROR
-            : MCP_LOG_STATUSES.ERROR,
+            ? McpLogStatuses.AuthError
+            : McpLogStatuses.Error,
         error: error instanceof Error ? error.message : String(error),
       };
       request.log.info(logContext, 'MCP request failed');

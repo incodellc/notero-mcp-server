@@ -20,6 +20,7 @@ export class HttpService {
         .catch(() => ({ message: response.statusText }))) as {
         message?: string;
       };
+
       throw new HttpError(body.message ?? response.statusText, response.status);
     }
     return response.json() as Promise<T>;

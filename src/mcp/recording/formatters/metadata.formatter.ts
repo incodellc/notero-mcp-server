@@ -1,7 +1,7 @@
 import {
-  FORMATTER_FALLBACK_VALUES,
-  FORMATTER_PROVIDERS,
-  FORMATTER_SECTION_HEADERS,
+  FormatterFallbackValues,
+  FormatterProviders,
+  FormatterSectionHeaders,
 } from '../../../formatters/formatters.constants.js';
 import { formatSeconds } from '../../../shared/time.utils.js';
 import type {
@@ -10,7 +10,7 @@ import type {
 } from '../recording.types.js';
 
 function formatDuration(seconds: number | null): string {
-  if (seconds === null) return FORMATTER_FALLBACK_VALUES.EMPTY_VALUE;
+  if (seconds === null) return FormatterFallbackValues.EmptyValue;
   return formatSeconds(seconds);
 }
 
@@ -26,7 +26,7 @@ function extractParticipants(
   segments: TranscriptionSegment[] | null | undefined,
 ): string {
   if (!segments || segments.length === 0)
-    return FORMATTER_FALLBACK_VALUES.UNKNOWN_PARTICIPANT;
+    return FormatterFallbackValues.UnknownParticipant;
   const ids = [
     ...new Set(
       segments.map((s) => s.speakerId).filter((id): id is string => !!id),
@@ -34,18 +34,18 @@ function extractParticipants(
   ];
   return ids.length > 0
     ? ids.join(', ')
-    : FORMATTER_FALLBACK_VALUES.UNKNOWN_PARTICIPANT;
+    : FormatterFallbackValues.UnknownParticipant;
 }
 
 export function formatMetadata(r: RecordingMetadata): string {
   const participants = extractParticipants(r.transcription?.segments);
   const provider = r.externalBot
-    ? FORMATTER_PROVIDERS.RECALL_BOT
-    : FORMATTER_PROVIDERS.DIRECT_UPLOAD;
+    ? FormatterProviders.RecallBot
+    : FormatterProviders.DirectUpload;
 
   return [
-    FORMATTER_SECTION_HEADERS.MEETING_METADATA,
-    `**Title:** ${r.displayName ?? FORMATTER_FALLBACK_VALUES.UNTITLED_MEETING}`,
+    FormatterSectionHeaders.MeetingMetadata,
+    `**Title:** ${r.displayName ?? FormatterFallbackValues.UntitledMeeting}`,
     `**Date:** ${formatDate(r.createdAt)}`,
     `**Duration:** ${formatDuration(r.duration)}`,
     `**Provider:** ${provider}`,

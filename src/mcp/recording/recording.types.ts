@@ -19,11 +19,9 @@ export interface RecordingMetadata extends Recording {
 
 export interface SummaryResult {
   content: string;
-  status: 'PENDING' | 'GENERATING' | 'COMPLETED' | 'FAILED';
 }
 
 export interface TranscriptResult {
   content: string;
   segments: TranscriptionSegment[] | null;
-  status: 'PENDING' | 'COMPLETED' | 'FAILED';
 }

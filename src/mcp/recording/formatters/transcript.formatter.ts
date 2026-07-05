@@ -1,6 +1,6 @@
 import {
-  FORMATTER_FALLBACK_VALUES,
-  FORMATTER_SECTION_HEADERS,
+  FormatterFallbackValues,
+  FormatterSectionHeaders,
 } from '../../../formatters/formatters.constants.js';
 import { formatSeconds } from '../../../shared/time.utils.js';
 import type { TranscriptionSegment } from '../recording.types.js';
@@ -42,18 +42,21 @@ export function formatTranscript(
   const hasAttribution = segments?.some((s) => s.speakerId);
 
   if (!hasAttribution || !segments || segments.length === 0) {
-    return `${FORMATTER_SECTION_HEADERS.MEETING_TRANSCRIPT}\n\n${fallbackContent}`;
+    return `${FormatterSectionHeaders.MeetingTranscript}\n\n${fallbackContent}`;
   }
 
   const merged = mergeConsecutiveSpeakers(segments);
-  const lines: string[] = [FORMATTER_SECTION_HEADERS.MEETING_TRANSCRIPT, ''];
+  const lines: string[] = [FormatterSectionHeaders.MeetingTranscript, ''];
 
   for (const block of merged) {
-    const speaker =
-      block.speakerId ?? FORMATTER_FALLBACK_VALUES.UNKNOWN_SPEAKER;
+    const speaker = block.speakerId ?? FormatterFallbackValues.UnknownSpeaker;
     lines.push(
-      `**${speaker}** *(${formatSeconds(block.start)} – ${formatSeconds(block.end)})*`,
-      block.text, '');
+      `**${speaker}** *(${formatSeconds(block.start)} – ${formatSeconds(
+        block.end,
+      )})*`,
+      block.text,
+      '',
+    );
   }
 
   return lines.join('\n');
