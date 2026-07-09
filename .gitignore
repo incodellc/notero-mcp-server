@@ -19,3 +19,10 @@ logs/
 
 # Openspec
 openspec/changes
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example
