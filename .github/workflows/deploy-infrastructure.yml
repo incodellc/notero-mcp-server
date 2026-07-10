@@ -51,7 +51,18 @@ jobs:
           terraform_version: 1.5.7
 
       - name: Terraform init
-        run: terraform init -input=false
+        run: |
+          INIT_ARGS=(
+            -input=false
+            -backend-config="bucket=${{ secrets.TF_STATE_BUCKET }}"
+            -backend-config="key=notero-mcp/terraform.tfstate"
+            -backend-config="region=${{ secrets.AWS_REGION }}"
+            -backend-config="encrypt=true"
+          )
+          if [ -n "${{ secrets.TF_STATE_LOCK_TABLE }}" ]; then
+            INIT_ARGS+=(-backend-config="dynamodb_table=${{ secrets.TF_STATE_LOCK_TABLE }}")
+          fi
+          terraform init "${INIT_ARGS[@]}"
 
       - name: Terraform format check
         run: terraform fmt -check -recursive
