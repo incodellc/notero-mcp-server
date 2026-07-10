@@ -18,4 +18,11 @@ logs/
 .turbo/
 
 # Openspec
-.openspec/changes
+openspec/changes
+
+# Terraform
+.terraform/
+*.tfstate
+*.tfstate.*
+*.tfvars
+!*.tfvars.example

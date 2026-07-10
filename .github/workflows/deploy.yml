@@ -1,0 +1,131 @@
+name: Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - 'src/**'
+      - 'Dockerfile'
+      - 'docker-compose.production.yaml'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+      - 'tsconfig.json'
+      - '.github/workflows/deploy.yml'
+
+permissions:
+  contents: read
+
+jobs:
+  prepare:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create deployment artifact
+        run: |
+          tar -czf /tmp/deployment.tar.gz \
+            --exclude='node_modules' \
+            --exclude='.git' \
+            --exclude='*.log' \
+            --exclude='.DS_Store' \
+            --exclude='.github' \
+            --exclude='.env*' \
+            --exclude='dist' \
+            --exclude='terraform' \
+            --exclude='openspec' \
+            .
+          mv /tmp/deployment.tar.gz deployment.tar.gz
+
+      - name: Upload deployment artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: deployment-files
+          path: deployment.tar.gz
+          retention-days: 1
+
+  deploy:
+    needs: prepare
+    runs-on: ubuntu-latest
+    env:
+      REMOTE_DIR: /srv/mcp
+    steps:
+      - name: Download deployment artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: deployment-files
+
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+
+      - name: Add server to known hosts
+        run: |
+          mkdir -p ~/.ssh
+          ssh-keyscan -H ${{ secrets.SSH_HOST }} >> ~/.ssh/known_hosts
+
+      - name: Create remote directory
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            "mkdir -p ${{ env.REMOTE_DIR }}"
+
+      - name: Copy files to server
+        run: |
+          scp -o StrictHostKeyChecking=no deployment.tar.gz \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ env.REMOTE_DIR }}/
+
+      - name: Create environment file from secrets
+        run: |
+          cat > /tmp/.env.production << EOF
+          NOTERO_API_URL=${{ secrets.NOTERO_API_URL }}
+          MCP_PUBLIC_URL=${{ secrets.MCP_PUBLIC_URL }}
+          NOTERO_AUTH_ISSUER_URL=${{ secrets.NOTERO_AUTH_ISSUER_URL }}
+          NOTERO_SERVICE_TOKEN=${{ secrets.NOTERO_SERVICE_TOKEN }}
+          NODE_ENV=production
+          EOF
+
+          append_env_if_set() {
+            if [ -n "$2" ]; then
+              echo "$1=$2" >> /tmp/.env.production
+            fi
+          }
+
+          append_env_if_set NOTERO_JWKS_URL "${{ secrets.NOTERO_JWKS_URL }}"
+          append_env_if_set MCP_OAUTH_SCOPES "${{ secrets.MCP_OAUTH_SCOPES }}"
+          append_env_if_set PORT "${{ secrets.PORT }}"
+          append_env_if_set LOG_LEVEL "${{ secrets.LOG_LEVEL }}"
+
+          scp -o StrictHostKeyChecking=no /tmp/.env.production \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ env.REMOTE_DIR }}/.env.production
+
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            "chmod 600 ${{ env.REMOTE_DIR }}/.env.production"
+
+          rm -f /tmp/.env.production
+
+      - name: Extract files and deploy on server
+        run: |
+          ssh -o StrictHostKeyChecking=no -o ServerAliveInterval=60 -o ServerAliveCountMax=10 \
+            ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} << EOF
+            set -e
+            cd ${{ env.REMOTE_DIR }}
+
+            cp .env.production /tmp/.env.production 2>/dev/null || true
+            find . -mindepth 1 -maxdepth 1 ! -name 'deployment.tar.gz' -exec rm -rf {} +
+            tar -xzf deployment.tar.gz
+            mv /tmp/.env.production .env.production 2>/dev/null || true
+            rm -f /tmp/.env.production
+
+            docker compose -f docker-compose.production.yaml down || true
+            docker compose -f docker-compose.production.yaml up -d --build
+            docker image prune -f || true
+            rm -f deployment.tar.gz
+          EOF
+
+      - name: Verify deployment
+        run: |
+          ssh -o StrictHostKeyChecking=no ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} \
+            "cd ${{ env.REMOTE_DIR }} && docker compose -f docker-compose.production.yaml ps"
