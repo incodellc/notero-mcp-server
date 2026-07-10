@@ -8,7 +8,7 @@ ssh_allowed_cidr = "203.0.113.10/32"
 allowed_cidr       = "0.0.0.0/0"
 
 enable_elastic_ip       = true
-enable_route53_record   = true
+enable_route53_record   = false
 route53_zone_name       = "notero.ai"
 route53_record_name     = "mcp.notero.ai"
 

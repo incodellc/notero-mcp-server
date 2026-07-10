@@ -84,7 +84,7 @@ variable "enable_elastic_ip" {
 variable "enable_route53_record" {
   description = "Create a Route53 A record for the MCP subdomain."
   type        = bool
-  default     = true
+  default     = false
 }
 
 variable "route53_zone_name" {
