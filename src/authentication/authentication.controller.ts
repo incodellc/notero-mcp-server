@@ -8,10 +8,8 @@ import {
   ScopeDelimiter,
 } from './authentication.constants.js';
 
-export default async function authenticationController(
-  fastify: FastifyInstance,
-): Promise<void> {
-  fastify.get(AuthenticationRoutes.ProtectedResourceMetadata, async () => ({
+function protectedResourceMetadata(): Record<string, unknown> {
+  return {
     [ProtectedResourceMetadataFields.Resource]: environment.MCP_PUBLIC_URL,
     [ProtectedResourceMetadataFields.AuthorizationServers]: [
       environment.NOTERO_AUTH_ISSUER_URL,
@@ -21,5 +19,15 @@ export default async function authenticationController(
     [ProtectedResourceMetadataFields.BearerMethodsSupported]: [
       BearerMethods.Header,
     ],
-  }));
+  };
+}
+
+export default async function authenticationController(
+  fastify: FastifyInstance,
+): Promise<void> {
+  const handler = async () => protectedResourceMetadata();
+
+  fastify.get(AuthenticationRoutes.ProtectedResourceMetadata, handler);
+  fastify.get(AuthenticationRoutes.ProtectedResourceMetadataForMcp, handler);
+  fastify.get(AuthenticationRoutes.ProtectedResourceMetadataUnderMcp, handler);
 }
