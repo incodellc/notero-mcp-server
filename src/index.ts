@@ -12,5 +12,7 @@ fastify.register(healthController);
 fastify.register(authenticationController);
 fastify.register(mcpController);
 
-await fastify.listen({ port: environment.PORT });
-fastify.log.info(`Notero MCP server listening on port ${environment.PORT}`);
+await fastify.listen({ port: environment.PORT, host: '0.0.0.0' });
+fastify.log.info(
+  `Notero MCP server listening on 0.0.0.0:${environment.PORT}`,
+);
