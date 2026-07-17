@@ -12,7 +12,7 @@ resource "aws_security_group" "mcp_server" {
   }
 
   ingress {
-    description = "HTTP for nginx / Let's Encrypt"
+    description = "HTTP for nginx and Lets Encrypt"
     from_port   = 80
     to_port     = 80
     protocol    = "tcp"
