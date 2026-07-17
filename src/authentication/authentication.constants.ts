@@ -11,6 +11,11 @@ export const AuthenticationOutboundHeaders = {
 
 export const AuthenticationRoutes = {
   ProtectedResourceMetadata: '/.well-known/oauth-protected-resource',
+  // RFC 9728 path insertion for resource https://…/mcp — Cursor probes this first.
+  ProtectedResourceMetadataForMcp:
+    '/.well-known/oauth-protected-resource/mcp',
+  ProtectedResourceMetadataUnderMcp:
+    '/mcp/.well-known/oauth-protected-resource',
 } as const;
 
 export const AuthenticationErrorStatuses = {
