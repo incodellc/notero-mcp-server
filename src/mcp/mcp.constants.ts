@@ -31,12 +31,23 @@ export const McpUriVariables = {
 } as const;
 
 export const McpRoutes = {
-  Endpoint: '/mcp',
+  Endpoint: '/',
+  LegacyEndpoint: '/mcp',
 } as const;
 
 export const McpServerInfo = {
   Name: 'notero',
   Version: '0.1.0',
+  Title: 'Notero',
+  WebsiteUrl: 'https://notero.ai',
+} as const;
+
+export const McpServerIcons = {
+  Mark: {
+    Src: 'https://notero.ai/images/shell/notero-mark.svg',
+    MimeType: 'image/svg+xml',
+    Sizes: ['any'],
+  },
 } as const;
 
 export const McpJsonRpc = {

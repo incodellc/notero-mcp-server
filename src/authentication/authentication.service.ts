@@ -1,6 +1,7 @@
 import { createRemoteJWKSet, jwtVerify } from 'jose';
 
 import { env as environment } from '../env.js';
+import { McpRoutes } from '../mcp/mcp.constants.js';
 import { RecordingApi } from '../mcp/recording/recording.api.js';
 import { UserApi } from '../mcp/user/user.api.js';
 import {
@@ -34,6 +35,15 @@ const jwksUrl =
 
 const remoteJwks = createRemoteJWKSet(new URL(jwksUrl));
 
+function acceptedAudiences(): string[] {
+  const canonical = environment.MCP_PUBLIC_URL.replace(/\/$/, '');
+  const legacyPath = McpRoutes.LegacyEndpoint;
+  const legacy = canonical.endsWith(legacyPath)
+    ? canonical
+    : `${canonical}${legacyPath}`;
+  return canonical === legacy ? [canonical] : [canonical, legacy];
+}
+
 function invalidToken(): AuthenticationError {
   return new AuthenticationError(
     AuthenticationErrorMessages.InvalidToken,
@@ -50,7 +60,7 @@ export async function verifyAccessToken(
   try {
     ({ payload } = await jwtVerify(token, keySet, {
       issuer: environment.NOTERO_AUTH_ISSUER_URL,
-      audience: environment.MCP_PUBLIC_URL,
+      audience: acceptedAudiences(),
       clockTolerance: TokenClockToleranceSeconds,
     }));
   } catch {

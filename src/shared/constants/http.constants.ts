@@ -2,6 +2,7 @@ export const HttpStatus = {
   Ok: 200,
   Unauthorized: 401,
   Forbidden: 403,
+  NotFound: 404,
   InternalServerError: 500,
 } as const;
 
