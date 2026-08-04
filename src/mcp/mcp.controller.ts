@@ -1,4 +1,4 @@
-import type { FastifyInstance } from 'fastify';
+import type { FastifyInstance, FastifyReply, FastifyRequest } from 'fastify';
 
 import { WwwAuthenticate } from '../authentication/authentication.constants.js';
 import { AuthenticationError } from '../authentication/authentication.errors.js';
@@ -9,6 +9,8 @@ import type { RequestLogContext } from '../shared/logger/logger.types.js';
 import { hashUserIdentifier } from '../shared/logger/sanitization.utils.js';
 import { McpJsonRpc, McpLogStatuses, McpRoutes } from './mcp.constants.js';
 import { handleMcpRequest } from './mcp.service.js';
+
+const mcpEndpoints = [McpRoutes.Endpoint, McpRoutes.LegacyEndpoint] as const;
 
 export default async function mcpController(
   fastify: FastifyInstance,
@@ -35,7 +37,17 @@ export default async function mcpController(
       });
   });
 
-  fastify.post(McpRoutes.Endpoint, async (request, reply) => {
+  // SSE streamable transport is not implemented yet; return a clear 404 so
+  // clients that probe GET do not treat a missing route as a transport error.
+  const getHandler = async (_request: FastifyRequest, reply: FastifyReply) => {
+    return reply.code(HttpStatus.NotFound).send({
+      message: 'SSE transport is not implemented yet',
+      error: 'Not Found',
+      statusCode: HttpStatus.NotFound,
+    });
+  };
+
+  const postHandler = async (request: FastifyRequest, reply: FastifyReply) => {
     const startTime = Date.now();
     let userHash: string = McpLogStatuses.UnknownEmail;
 
@@ -65,5 +77,10 @@ export default async function mcpController(
       request.log.info(logContext, 'MCP request failed');
       throw error;
     }
-  });
+  };
+
+  for (const endpoint of mcpEndpoints) {
+    fastify.get(endpoint, getHandler);
+    fastify.post(endpoint, postHandler);
+  }
 }

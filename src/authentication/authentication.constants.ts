@@ -11,7 +11,7 @@ export const AuthenticationOutboundHeaders = {
 
 export const AuthenticationRoutes = {
   ProtectedResourceMetadata: '/.well-known/oauth-protected-resource',
-  // RFC 9728 path insertion for resource https://…/mcp — Cursor probes this first.
+  // RFC 9728 path-insertion variants kept for clients that still target /mcp.
   ProtectedResourceMetadataForMcp:
     '/.well-known/oauth-protected-resource/mcp',
   ProtectedResourceMetadataUnderMcp:

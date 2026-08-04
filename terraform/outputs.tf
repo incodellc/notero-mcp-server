@@ -15,7 +15,7 @@ output "instance_public_dns" {
 
 output "mcp_endpoint_url" {
   description = "Base MCP HTTP endpoint URL until HTTPS is configured."
-  value       = "http://${local.mcp_public_ip}:${var.mcp_server_port}/mcp"
+  value       = "http://${local.mcp_public_ip}:${var.mcp_server_port}"
 }
 
 output "health_check_url" {

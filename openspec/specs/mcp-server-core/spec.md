@@ -6,22 +6,26 @@ Define the core transport, capability advertisement, health check, and request l
 ## Requirements
 
 ### Requirement: MCP server exposes Streamable HTTP transport
-The MCP server SHALL implement the MCP Streamable HTTP transport at `POST /mcp` and `GET /mcp` on the `mcp.notero.ai` subdomain, using the `@modelcontextprotocol/sdk` TypeScript SDK wrapped in a Fastify HTTP server.
+The MCP server SHALL implement the MCP Streamable HTTP transport at `POST /` and `GET /` on the `mcp.notero.ai` subdomain (canonical client URL `https://mcp.notero.ai`), using the `@modelcontextprotocol/sdk` TypeScript SDK wrapped in a Fastify HTTP server. The legacy paths `POST /mcp` and `GET /mcp` SHALL remain available for existing clients.
 
 #### Scenario: Client connects via Streamable HTTP
+- **WHEN** an MCP client sends a valid JSON-RPC request to `POST https://mcp.notero.ai`
+- **THEN** the server processes the request and returns a valid MCP JSON-RPC response
+
+#### Scenario: Client connects via legacy path
 - **WHEN** an MCP client sends a valid JSON-RPC request to `POST https://mcp.notero.ai/mcp`
 - **THEN** the server processes the request and returns a valid MCP JSON-RPC response
 
 #### Scenario: Client initiates SSE stream
-- **WHEN** an MCP client sends `GET https://mcp.notero.ai/mcp` to open a server-sent event stream
+- **WHEN** an MCP client sends `GET https://mcp.notero.ai` to open a server-sent event stream
 - **THEN** the server establishes the stream and sends events as they occur
 
 ### Requirement: Server advertises MCP capabilities on initialize
-The MCP server SHALL respond to the MCP `initialize` request with its supported capabilities, including the `resources` capability.
+The MCP server SHALL respond to the MCP `initialize` request with its supported capabilities, including the `resources` capability, and SHALL advertise the Notero mark icon via the MCP `icons` metadata.
 
 #### Scenario: Client sends initialize
 - **WHEN** a client sends an MCP `initialize` request
-- **THEN** the server responds with server name `notero`, version, and `capabilities: { resources: {} }`
+- **THEN** the server responds with server name `notero`, version, icon metadata pointing at the public Notero mark, and `capabilities: { resources: {} }`
 
 ### Requirement: Health endpoint
 The MCP server SHALL expose `GET /health` returning HTTP 200 with `{ status: "ok" }` for infrastructure health checks.
