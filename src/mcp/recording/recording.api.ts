@@ -1,6 +1,7 @@
 import type { HttpService } from '../../shared/http.service.js';
 import { RecordingApiPaths } from './recording.constants.js';
 import type {
+  MeetingNote,
   Recording,
   RecordingMetadata,
   SummaryResult,
@@ -10,8 +11,17 @@ import type {
 export class RecordingApi {
   constructor(private readonly http: HttpService) {}
 
-  list(): Promise<Recording[]> {
-    return this.http.get<Recording[]>(RecordingApiPaths.Base);
+  list(search?: string): Promise<Recording[]> {
+    if (search === undefined || search === '') {
+      return this.http.get<Recording[]>(RecordingApiPaths.Base);
+    }
+
+    const params = new URLSearchParams({
+      [RecordingApiPaths.QueryKeys.Search]: search,
+    });
+    return this.http.get<Recording[]>(
+      `${RecordingApiPaths.Base}?${params.toString()}`,
+    );
   }
 
   getMetadata(id: string): Promise<RecordingMetadata> {
@@ -29,6 +39,12 @@ export class RecordingApi {
   getTranscript(id: string): Promise<TranscriptResult> {
     return this.http.get<TranscriptResult>(
       `${RecordingApiPaths.Base}/${id}/${RecordingApiPaths.Suffixes.Transcript}`,
+    );
+  }
+
+  getNotes(id: string): Promise<MeetingNote[]> {
+    return this.http.get<MeetingNote[]>(
+      `${RecordingApiPaths.Base}/${id}/${RecordingApiPaths.Suffixes.Notes}`,
     );
   }
 }

@@ -8,6 +8,9 @@ import {
   McpToolInputKeys,
   McpToolNames,
 } from '../mcp.constants.js';
+import { formatMetadata } from './formatters/metadata.formatter.js';
+import { formatNotes } from './formatters/notes.formatter.js';
+import { formatSearchResults } from './formatters/search.formatter.js';
 import { formatSummary } from './formatters/summary.formatter.js';
 import { formatTranscript } from './formatters/transcript.formatter.js';
 import type { RecordingApi } from './recording.api.js';
@@ -22,6 +25,50 @@ export function registerRecordingTools(
   server: McpServer,
   recordingApi: RecordingApi,
 ): void {
+  server.registerTool(
+    McpToolNames.MeetingMetadata,
+    {
+      description: McpToolDescriptions.MeetingMetadata,
+      inputSchema: { [McpToolInputKeys.MeetingId]: z.string() },
+    },
+    async (args) => {
+      const meetingId = args[McpToolInputKeys.MeetingId];
+      try {
+        const metadata = await recordingApi.getMetadata(meetingId);
+        return {
+          content: [{ type: 'text', text: formatMetadata(metadata) }],
+        };
+      } catch (error) {
+        return {
+          content: [{ type: 'text', text: toErrorMessage(error) }],
+          isError: true,
+        };
+      }
+    },
+  );
+
+  server.registerTool(
+    McpToolNames.MeetingNotes,
+    {
+      description: McpToolDescriptions.MeetingNotes,
+      inputSchema: { [McpToolInputKeys.MeetingId]: z.string() },
+    },
+    async (args) => {
+      const meetingId = args[McpToolInputKeys.MeetingId];
+      try {
+        const notes = await recordingApi.getNotes(meetingId);
+        return {
+          content: [{ type: 'text', text: formatNotes(notes) }],
+        };
+      } catch (error) {
+        return {
+          content: [{ type: 'text', text: toErrorMessage(error) }],
+          isError: true,
+        };
+      }
+    },
+  );
+
   server.registerTool(
     McpToolNames.MeetingSummary,
     {
@@ -61,6 +108,28 @@ export function registerRecordingTools(
               text: formatTranscript(transcript.segments, transcript.content),
             },
           ],
+        };
+      } catch (error) {
+        return {
+          content: [{ type: 'text', text: toErrorMessage(error) }],
+          isError: true,
+        };
+      }
+    },
+  );
+
+  server.registerTool(
+    McpToolNames.SearchMeetings,
+    {
+      description: McpToolDescriptions.SearchMeetings,
+      inputSchema: { [McpToolInputKeys.Query]: z.string() },
+    },
+    async (args) => {
+      const query = args[McpToolInputKeys.Query];
+      try {
+        const recordings = await recordingApi.list(query);
+        return {
+          content: [{ type: 'text', text: formatSearchResults(recordings) }],
         };
       } catch (error) {
         return {
