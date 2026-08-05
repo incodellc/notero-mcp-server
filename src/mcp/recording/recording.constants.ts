@@ -4,5 +4,9 @@ export const RecordingApiPaths = {
     Metadata: 'metadata',
     Summary: 'summary',
     Transcript: 'transcript',
+    Notes: 'notes',
+  },
+  QueryKeys: {
+    Search: 'search',
   },
 } as const;

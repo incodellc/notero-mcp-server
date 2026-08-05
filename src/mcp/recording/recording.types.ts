@@ -25,3 +25,13 @@ export interface TranscriptResult {
   content: string;
   segments: TranscriptionSegment[] | null;
 }
+
+export interface MeetingNote {
+  id: string;
+  content: string;
+  createdAt: string;
+  author: {
+    firstName: string | null;
+    lastName: string | null;
+  };
+}

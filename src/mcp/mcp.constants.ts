@@ -9,19 +9,32 @@ export const McpResourceUriTemplates = {
 } as const;
 
 export const McpToolNames = {
+  MeetingMetadata: 'get_meeting_metadata',
+  MeetingNotes: 'get_meeting_notes',
   MeetingSummary: 'get_meeting_summary',
   MeetingTranscript: 'get_meeting_transcript',
+  UserProfile: 'get_user_profile',
+  SearchMeetings: 'search_meetings',
 } as const;
 
 export const McpToolDescriptions = {
+  MeetingMetadata:
+    'Retrieve metadata for a meeting recording by its meeting ID, formatted as Markdown.',
+  MeetingNotes:
+    'Retrieve user-authored notes for a meeting recording by its meeting ID, formatted as Markdown.',
   MeetingSummary:
     'Retrieve the AI-generated summary of a meeting recording by its meeting ID, formatted as Markdown.',
   MeetingTranscript:
     'Retrieve the full transcript of a meeting recording by its meeting ID, formatted as Markdown.',
+  UserProfile:
+    'Retrieve the authenticated user profile and organization, formatted as Markdown.',
+  SearchMeetings:
+    'Search meetings in the organization by title or transcript content, formatted as Markdown.',
 } as const;
 
 export const McpToolInputKeys = {
   MeetingId: 'meetingId',
+  Query: 'query',
 } as const;
 
 export const MCP_URI_BASE = 'notero://meetings';
