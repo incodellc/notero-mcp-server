@@ -2,7 +2,7 @@ import {
   FormatterFallbackValues,
   FormatterSectionHeaders,
 } from '../../../formatters/formatters.constants.js';
-import { formatSeconds } from '../../../shared/time.utils.js';
+import { formatDate, formatSeconds } from '../../../shared/time.utils.js';
 import type { Recording } from '../recording.types.js';
 
 function formatDuration(seconds: number | null): string {
@@ -10,20 +10,12 @@ function formatDuration(seconds: number | null): string {
   return formatSeconds(seconds);
 }
 
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-}
-
-export function formatSearchResults(recordings: Recording[]): string {
+export function formatMeetingList(recordings: Recording[]): string {
   if (recordings.length === 0) {
-    return `${FormatterSectionHeaders.SearchResults}\n\n${FormatterFallbackValues.NoSearchResults}`;
+    return `${FormatterSectionHeaders.Meetings}\n\n${FormatterFallbackValues.NoMeetings}`;
   }
 
-  const lines: string[] = [FormatterSectionHeaders.SearchResults, ''];
+  const lines: string[] = [FormatterSectionHeaders.Meetings, ''];
 
   for (const recording of recordings) {
     lines.push(

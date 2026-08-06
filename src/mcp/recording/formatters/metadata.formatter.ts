@@ -3,7 +3,7 @@ import {
   FormatterProviders,
   FormatterSectionHeaders,
 } from '../../../formatters/formatters.constants.js';
-import { formatSeconds } from '../../../shared/time.utils.js';
+import { formatDate, formatSeconds } from '../../../shared/time.utils.js';
 import type {
   RecordingMetadata,
   TranscriptionSegment,
@@ -12,14 +12,6 @@ import type {
 function formatDuration(seconds: number | null): string {
   if (seconds === null) return FormatterFallbackValues.EmptyValue;
   return formatSeconds(seconds);
-}
-
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
 }
 
 function extractParticipants(

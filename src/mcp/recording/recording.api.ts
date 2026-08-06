@@ -1,5 +1,8 @@
 import type { HttpService } from '../../shared/http.service.js';
-import { RecordingApiPaths } from './recording.constants.js';
+import {
+  RecordingApiPaths,
+  RecordingListDefaults,
+} from './recording.constants.js';
 import type {
   MeetingNote,
   Recording,
@@ -8,19 +11,35 @@ import type {
   TranscriptResult,
 } from './recording.types.js';
 
+export type ListRecordingsParams = {
+  search?: string;
+  from?: string;
+  to?: string;
+  limit?: number;
+};
+
 export class RecordingApi {
   constructor(private readonly http: HttpService) {}
 
-  list(search?: string): Promise<Recording[]> {
-    if (search === undefined || search === '') {
-      return this.http.get<Recording[]>(RecordingApiPaths.Base);
+  list(params: ListRecordingsParams = {}): Promise<Recording[]> {
+    const query = new URLSearchParams();
+
+    if (params.search !== undefined && params.search !== '') {
+      query.set(RecordingApiPaths.QueryKeys.Search, params.search);
+    }
+    if (params.from !== undefined && params.from !== '') {
+      query.set(RecordingApiPaths.QueryKeys.From, params.from);
+    }
+    if (params.to !== undefined && params.to !== '') {
+      query.set(RecordingApiPaths.QueryKeys.To, params.to);
     }
 
-    const params = new URLSearchParams({
-      [RecordingApiPaths.QueryKeys.Search]: search,
-    });
+    const limit = params.limit ?? RecordingListDefaults.Limit;
+    query.set(RecordingApiPaths.QueryKeys.Limit, String(limit));
+
+    const qs = query.toString();
     return this.http.get<Recording[]>(
-      `${RecordingApiPaths.Base}?${params.toString()}`,
+      qs ? `${RecordingApiPaths.Base}?${qs}` : RecordingApiPaths.Base,
     );
   }
 

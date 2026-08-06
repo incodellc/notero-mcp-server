@@ -2,15 +2,9 @@ import {
   FormatterFallbackValues,
   FormatterSectionHeaders,
 } from '../../../formatters/formatters.constants.js';
+import { formatDate } from '../../../shared/time.utils.js';
 import type { MeetingNote } from '../recording.types.js';
 
-function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'long',
-    day: 'numeric',
-  });
-}
 
 function formatAuthorName(author: MeetingNote['author']): string {
   return (
