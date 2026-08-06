@@ -1,25 +1,18 @@
 import type { McpServer } from '@modelcontextprotocol/sdk/server/mcp.js';
 import { z } from 'zod';
 
-import { HttpError } from '../../shared/http.errors.js';
 import {
-  McpErrorMessages,
   McpToolDescriptions,
   McpToolInputKeys,
   McpToolNames,
 } from '../mcp.constants.js';
+import { toErrorMessage } from '../mcp.errors.js';
 import { formatMetadata } from './formatters/metadata.formatter.js';
 import { formatNotes } from './formatters/notes.formatter.js';
 import { formatSearchResults } from './formatters/search.formatter.js';
 import { formatSummary } from './formatters/summary.formatter.js';
 import { formatTranscript } from './formatters/transcript.formatter.js';
 import type { RecordingApi } from './recording.api.js';
-
-function toErrorMessage(error: unknown): string {
-  return error instanceof HttpError
-    ? error.message
-    : McpErrorMessages.ResourceNotFound;
-}
 
 export function registerRecordingTools(
   server: McpServer,
