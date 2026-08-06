@@ -14,6 +14,7 @@ export const McpToolNames = {
   MeetingSummary: 'get_meeting_summary',
   MeetingTranscript: 'get_meeting_transcript',
   UserProfile: 'get_user_profile',
+  ListMeetings: 'list_meetings',
   SearchMeetings: 'search_meetings',
 } as const;
 
@@ -28,13 +29,18 @@ export const McpToolDescriptions = {
     'Retrieve the full transcript of a meeting recording by its meeting ID, formatted as Markdown.',
   UserProfile:
     'Retrieve the authenticated user profile and organization, formatted as Markdown.',
+  ListMeetings:
+    'Browse recent meetings in the organization (newest first). Optional from/to ISO date filters and limit (default 50, max 100). Call with no arguments to list recent meetings and get IDs for follow-up get_* tools. Prefer this over search_meetings when browsing or filtering by date. Formatted as Markdown.',
   SearchMeetings:
-    'Search meetings in the organization by title or transcript content, formatted as Markdown.',
+    'Search meetings by keyword in title or transcript content. Use list_meetings instead to browse recent meetings or filter by date. Formatted as Markdown.',
 } as const;
 
 export const McpToolInputKeys = {
   MeetingId: 'meetingId',
   Query: 'query',
+  From: 'from',
+  To: 'to',
+  Limit: 'limit',
 } as const;
 
 export const MCP_URI_BASE = 'notero://meetings';

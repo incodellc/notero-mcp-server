@@ -9,10 +9,11 @@ import {
 import { toErrorMessage } from '../mcp.errors.js';
 import { formatMetadata } from './formatters/metadata.formatter.js';
 import { formatNotes } from './formatters/notes.formatter.js';
-import { formatSearchResults } from './formatters/search.formatter.js';
+import { formatMeetingList } from './formatters/search.formatter.js';
 import { formatSummary } from './formatters/summary.formatter.js';
 import { formatTranscript } from './formatters/transcript.formatter.js';
 import type { RecordingApi } from './recording.api.js';
+import { RecordingListDefaults } from './recording.constants.js';
 
 export function registerRecordingTools(
   server: McpServer,
@@ -112,6 +113,40 @@ export function registerRecordingTools(
   );
 
   server.registerTool(
+    McpToolNames.ListMeetings,
+    {
+      description: McpToolDescriptions.ListMeetings,
+      inputSchema: {
+        [McpToolInputKeys.From]: z.string().optional(),
+        [McpToolInputKeys.To]: z.string().optional(),
+        [McpToolInputKeys.Limit]: z
+          .number()
+          .int()
+          .min(1)
+          .max(RecordingListDefaults.MaxLimit)
+          .optional(),
+      },
+    },
+    async (args) => {
+      try {
+        const recordings = await recordingApi.list({
+          from: args[McpToolInputKeys.From],
+          to: args[McpToolInputKeys.To],
+          limit: args[McpToolInputKeys.Limit],
+        });
+        return {
+          content: [{ type: 'text', text: formatMeetingList(recordings) }],
+        };
+      } catch (error) {
+        return {
+          content: [{ type: 'text', text: toErrorMessage(error) }],
+          isError: true,
+        };
+      }
+    },
+  );
+
+  server.registerTool(
     McpToolNames.SearchMeetings,
     {
       description: McpToolDescriptions.SearchMeetings,
@@ -120,9 +155,9 @@ export function registerRecordingTools(
     async (args) => {
       const query = args[McpToolInputKeys.Query];
       try {
-        const recordings = await recordingApi.list(query);
+        const recordings = await recordingApi.list({ search: query });
         return {
-          content: [{ type: 'text', text: formatSearchResults(recordings) }],
+          content: [{ type: 'text', text: formatMeetingList(recordings) }],
         };
       } catch (error) {
         return {

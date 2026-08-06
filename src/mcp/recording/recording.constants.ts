@@ -8,5 +8,13 @@ export const RecordingApiPaths = {
   },
   QueryKeys: {
     Search: 'search',
+    From: 'from',
+    To: 'to',
+    Limit: 'limit',
   },
+} as const;
+
+export const RecordingListDefaults = {
+  Limit: 50,
+  MaxLimit: 100,
 } as const;

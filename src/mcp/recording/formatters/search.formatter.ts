@@ -10,13 +10,12 @@ function formatDuration(seconds: number | null): string {
   return formatSeconds(seconds);
 }
 
-
-export function formatSearchResults(recordings: Recording[]): string {
+export function formatMeetingList(recordings: Recording[]): string {
   if (recordings.length === 0) {
-    return `${FormatterSectionHeaders.SearchResults}\n\n${FormatterFallbackValues.NoSearchResults}`;
+    return `${FormatterSectionHeaders.Meetings}\n\n${FormatterFallbackValues.NoMeetings}`;
   }
 
-  const lines: string[] = [FormatterSectionHeaders.SearchResults, ''];
+  const lines: string[] = [FormatterSectionHeaders.Meetings, ''];
 
   for (const recording of recordings) {
     lines.push(
